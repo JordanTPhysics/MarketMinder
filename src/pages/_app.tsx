@@ -8,9 +8,6 @@ import { useReportWebVitals } from 'next/web-vitals'
 import { Analytics } from "@vercel/analytics/react"
 import Head from 'next/head';
 
-
-
-// import { SessionProvider } from '../lib/SessionContext';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
 
@@ -22,8 +19,6 @@ export default function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <>
-    
-      {/* <SessionProvider> */}
         <Head>
           <title>MarketMinder</title>
           <meta name="description" content="Data Analytics consulting Solutions - Hire Now" />
@@ -33,8 +28,6 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         <Header />
         <Component {...pageProps} />
         <Footer />
-      {/* </SessionProvider> */}
-
     </>
   )
 }

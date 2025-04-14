@@ -3,7 +3,7 @@
 import React from "react"
 
 import { ColumnDef } from "@tanstack/react-table"
-import { ArrowUpDown, Star } from "lucide-react"
+import { ArrowUpDown } from "lucide-react"
 import Link from "next/link"
 import StarRating from "../components/ui/star-rating"
 
