@@ -5,6 +5,8 @@ import React from "react"
 import { ColumnDef } from "@tanstack/react-table"
 import { ArrowUpDown } from "lucide-react"
 import Link from "next/link"
+
+import { MdOutlineCheckBoxOutlineBlank, MdOutlineCheckBox } from "react-icons/md";
 import StarRating from "../components/ui/star-rating"
 
 export class Place {
@@ -28,7 +30,8 @@ export class Place {
     Rating: number,
     Url: string,
     Types: string,
-    Phone: string
+    Phone: string,
+    Selected: boolean = false
   ) {
     this.PlaceID = PlaceID;
     this.Address = Address;
@@ -39,34 +42,55 @@ export class Place {
     this.Url = Url;
     this.Types = Types;
     this.Phone = Phone;
+    this.Selected = Selected;
   }
 }
 
+export const IsCloseMatch = (input: string, check: string): boolean => {
+  const normalizedInput = input.toLowerCase();
+  const normalizedCheck = check.toLowerCase();
+  console.log("Normalized Input: ", normalizedInput);
+  console.log("Normalized Check: ", normalizedCheck);
+
+  let matching: number = 0;
+  let length = Math.min(normalizedInput.length, normalizedCheck.length);
+  if (length < 3) return false;
+
+  for (let i = 0; i < length; i++) {
+    if (normalizedInput[i] === normalizedCheck[i]) {
+      matching++;
+    }
+  }
+
+  console.log("Matching: ", matching);
+  return matching >= normalizedInput.length / 2;
+}
+
 export const FindCloseMatch = (input: string, options: string[]): string | null => {
-    const normalizedInput = input.toLowerCase();
-    let closestMatch: string | null = null;
-    let highestSimilarity = 0;
+  const normalizedInput = input.toLowerCase();
+  let closestMatch: string | null = null;
+  let highestSimilarity = 0;
 
-    options.forEach((option) => {
-      const normalizedOption = option.toLowerCase();
-      let similarity = 0;
+  options.forEach((option) => {
+    const normalizedOption = option.toLowerCase();
+    let similarity = 0;
 
-      for (let i = 0; i < Math.min(normalizedInput.length, normalizedOption.length); i++) {
-        if (normalizedInput[i] === normalizedOption[i]) {
-          similarity++;
-        } else {
-          break;
-        }
+    for (let i = 0; i < Math.min(normalizedInput.length, normalizedOption.length); i++) {
+      if (normalizedInput[i] === normalizedOption[i]) {
+        similarity++;
+      } else {
+        break;
       }
+    }
 
-      if (similarity > highestSimilarity) {
-        highestSimilarity = similarity;
-        closestMatch = option;
-      }
-    });
+    if (similarity > highestSimilarity) {
+      highestSimilarity = similarity;
+      closestMatch = option;
+    }
+  });
 
-    return closestMatch;
-  };
+  return closestMatch;
+};
 
 export const CountPlaceType = (places: Place[]) => {
   const placeType: { [key: string]: number } = {};
@@ -174,12 +198,12 @@ export const columns: ColumnDef<Place>[] = [
         </button>
       )
 
-    }, 
+    },
     accessorKey: "Types",
     cell: ({ cell }) => {
       return (
         <span>
-          {cell.getValue<string>().replaceAll(",","")}
+          {cell.getValue<string>().replaceAll(",", "")}
         </span>
       );
     }
@@ -191,7 +215,7 @@ export const columns: ColumnDef<Place>[] = [
           className="text-white"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Url
+          Selected
           <ArrowUpDown className="ml-2 h-4 w-4 text-white" />
         </button>
       )
@@ -199,8 +223,13 @@ export const columns: ColumnDef<Place>[] = [
     }, accessorKey: "Selected",
     cell: ({ cell }) => {
       return (
-        <a href={cell.row.original.Url} target="_blank" rel="noreferrer" className="decoration-contrast">
-          {cell.row.original.Url} </a>
+        <span className="flex justify-center items-center">
+          {cell.getValue<boolean>() ? (
+            <MdOutlineCheckBox color="orange" size="40" />
+          ) : (
+            <MdOutlineCheckBoxOutlineBlank color="gray" size={40}/>
+          )}
+        </span>
       );
     },
   },
